@@ -1,20 +1,23 @@
 <script setup>
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, watch } from 'vue'
 
 // Audio player reference
 const audioPlayer = ref(null)
 const playingId = ref(null)
 const selectedCategory = ref(null)
+const searchQuery = ref('')
 
 // Currency converter
 const showConverter = ref(false)
 const vndAmount = ref('')
 const sgdAmount = ref('')
 
+// Emergency section
+const showEmergency = ref(false)
 
 // Fixed exchange rates (as of 9 May 2025)
-const vndToSgdRate = 0.000050 // 1 VND = 0.000058 SGD
-const sgdToVndRate = 20011.72     // 1 SGD = 17,241 VND
+const vndToSgdRate = 0.000050 // 1 VND = 0.000050 SGD
+const sgdToVndRate = 20011.72 // 1 SGD = 20,011.72 VND
 
 // Define categories
 const categories = [
@@ -24,6 +27,16 @@ const categories = [
   { id: 'transport', name: 'Transportation' },
   { id: 'shopping', name: 'Shopping' },
   { id: 'emergency', name: 'Emergency' }
+]
+
+// Define emergency numbers
+const emergencyNumbers = [
+  { name: 'Police', number: '113', description: 'For emergencies requiring police assistance' },
+  { name: 'Fire Department', number: '114', description: 'For fire emergencies' },
+  { name: 'Ambulance', number: '115', description: 'For medical emergencies' },
+  { name: 'Traffic Police', number: '118', description: 'For traffic accidents or violations' },
+  { name: 'Tourist Police (Hanoi)', number: '(024) 3825 7047', description: 'For tourists needing police assistance in Hanoi' },
+  { name: 'Tourist Police (Ho Chi Minh City)', number: '(028) 3838 7200', description: 'For tourists needing police assistance in HCMC' }
 ]
 
 // Define phrases
@@ -44,8 +57,7 @@ const phrases = [
     "vietnamese": "Chào!",
     "pronunciation": "chow",
     "audio": "/audio/greetings/hi.mp3"
-  },
-  {
+  }, {
     "id": 3,
     "category": "greetings",
     "english": "Thank you",
@@ -302,61 +314,76 @@ const phrases = [
     "audio": "/audio/food/the_check_please.mp3"
   },
   {
-    id: 35,
-    category: 'food',
-    english: '',
-    vietnamese: '',
-    pronunciation: '',
-    audio: '/audio/food/null.mp3'
+    "id": 35,
+    "category": "shopping",
+    "english": "I want to buy this",
+    "vietnamese": "Tôi muốn mua cái này",
+    "pronunciation": "",
+    "audio": "/audio/shopping/i_want_to_buy_this.mp3"
   },
   {
-    id: 36,
-    category: 'food',
-    english: '',
-    vietnamese: '',
-    pronunciation: '',
-    audio: '/audio/food/null.mp3'
+    "id": 36,
+    "category": "shopping",
+    "english": "I'll pay in cash",
+    "vietnamese": "Tôi sẽ trả bằng tiền mặt",
+    "pronunciation": "",
+    "audio": "/audio/shopping/i_will_pay_in_cash.mp3"
   },
   {
-    id: 37,
-    category: 'food',
-    english: '',
-    vietnamese: '',
-    pronunciation: '',
-    audio: '/audio/food/null.mp3'
+    "id": 37,
+    "category": "shopping",
+    "english": "Do you accept cards?",
+    "vietnamese": "Có chấp nhận thẻ không? ",
+    "pronunciation": "",
+    "audio": "/audio/shopping/do_you_accept_cards.mp3"
   },
   {
-    id: 38,
-    category: 'food',
-    english: '',
-    vietnamese: '',
-    pronunciation: '',
-    audio: '/audio/food/null.mp3'
+    "id": 38,
+    "category": "shopping",
+    "english": "May I have the receipt?",
+    "vietnamese": "Tôi có thể xin biên lai được không?",
+    "pronunciation": "",
+    "audio": "/audio/shopping/can_i_have_a_receipt.mp3"
   },
   {
-    id: 39,
-    category: 'food',
-    english: '',
-    vietnamese: '',
-    pronunciation: '',
-    audio: '/audio/food/null.mp3'
+    "id": 39,
+    "category": "shopping",
+    "english": "",
+    "vietnamese": "",
+    "pronunciation": "",
+    "audio": "/audio/shopping/null.mp3"
   },
   {
-    id: 40,
-    category: 'food',
-    english: '',
-    vietnamese: '',
-    pronunciation: '',
-    audio: '/audio/food/null.mp3'
+    "id": 40,
+    "category": "shopping",
+    "english": "",
+    "vietnamese": "",
+    "pronunciation": "",
+    "audio": "/audio/shopping/null.mp3"
   }
+
 ]
 
 // Computed property for filtered phrases
 const filteredPhrases = computed(() => {
-  if (!selectedCategory.value || selectedCategory.value.id === 'all') {
-    return phrases
+  let result = phrases
+
+  // First filter by category
+  if (selectedCategory.value && selectedCategory.value.id !== 'all') {
+    result = result.filter(phrase => phrase.category === selectedCategory.value.id)
   }
-  return phrases.filter(phrase => phrase.category === selectedCategory.value.id)
+
+  // Then filter by search query if it exists
+  if (searchQuery.value.trim()) {
+    const query = searchQuery.value.trim().toLowerCase()
+    result = result.filter(phrase =>
+      phrase.english.toLowerCase().includes(query) ||
+      phrase.vietnamese.toLowerCase().includes(query) ||
+      (phrase.pronunciation && phrase.pronunciation.toLowerCase().includes(query))
+    )
+  }
+
+  return result
 })
 
 // Function to play audio
@@ -401,12 +428,36 @@ const convertSgdToVnd = () => {
   }
 }
 
-const scrollToConverter = () => {
-  showConverter.value = true
+const scrollToSection = (sectionId, show = true) => {
+  if (sectionId === 'converter') {
+    showConverter.value = show
+    showEmergency.value = false
+  } else if (sectionId === 'emergency') {
+    showEmergency.value = show
+    showConverter.value = false
+  }
+
   setTimeout(() => {
-    document.getElementById('currency-converter').scrollIntoView({ behavior: 'smooth' })
+    const element = document.getElementById(sectionId)
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth' })
+    }
   }, 100)
 }
+
+// Call emergency number
+const callNumber = (number) => {
+  // In a real mobile app, this would use a native API to initiate a call
+  // For web, we'll just show an alert
+  alert(`Calling ${number}...`)
+  // Or could use:
+  // window.location.href = `tel:${number}`
+}
+
+// Clear search when changing category
+watch(selectedCategory, () => {
+  searchQuery.value = ''
+})
 
 onMounted(() => {
   // Set default category on load
@@ -415,29 +466,60 @@ onMounted(() => {
 </script>
 
 <template>
-  <main class="container mx-auto px-4 py-8">
+  <main class="container mx-auto px-4 py-6 max-w-6xl">
     <!-- Header -->
-    <header class="text-center mb-8 relative">
-      <h1 class="text-3xl font-bold text-green-700">Common Vietnamese Phrases</h1>
-      <p class="text-gray-600 mt-2">Learn / play useful Vietnamese phrases for different situations</p>
+    <header class="text-center mb-6 md:mb-8 relative">
+      <h1 class="text-2xl md:text-3xl font-bold text-green-700">Common Vietnamese Phrases</h1>
+      <p class="text-gray-600 mt-1 text-sm md:text-base">Learn useful Vietnamese phrases for your trip</p>
 
-      <!-- Currency Converter Quick Link -->
-      <button @click="scrollToConverter"
-        class="absolute right-0 top-0 bg-blue-500 hover:bg-blue-600 text-white rounded-full px-3 py-1 text-sm flex items-center">
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24"
-          stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-            d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-        </svg>
-        Currency Converter
-      </button>
+      <!-- Quick Action Buttons -->
+      <div class="flex flex-wrap justify-center gap-2 mt-4">
+        <button @click="scrollToSection('converter')"
+          class="bg-blue-500 hover:bg-blue-600 text-white rounded-full px-3 py-1 text-xs md:text-sm flex items-center transition-colors">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 md:h-4 md:w-4 mr-1" fill="none" viewBox="0 0 24 24"
+            stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+          Currency Converter
+        </button>
+        <button @click="scrollToSection('emergency')"
+          class="bg-red-500 hover:bg-red-600 text-white rounded-full px-3 py-1 text-xs md:text-sm flex items-center transition-colors">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 md:h-4 md:w-4 mr-1" fill="none" viewBox="0 0 24 24"
+            stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192l-3.536 3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+          Emergency Numbers
+        </button>
+      </div>
     </header>
 
+    <!-- Search Bar -->
+    <div class="mb-4 md:mb-6 relative max-w-md mx-auto">
+      <div class="relative">
+        <input type="text" v-model="searchQuery" placeholder="Search phrases..."
+          class="w-full pl-10 pr-4 py-2 rounded-full border border-gray-300 focus:border-green-500 focus:ring-1 focus:ring-green-500 focus:outline-none">
+        <svg xmlns="http://www.w3.org/2000/svg"
+          class="h-5 w-5 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" fill="none"
+          viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+        </svg>
+        <button v-if="searchQuery" @click="searchQuery = ''"
+          class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+      </div>
+    </div>
+
     <!-- Category Selection -->
-    <div class="mb-8">
-      <div class="flex flex-wrap justify-center gap-2 md:gap-4">
+    <div class="mb-6 overflow-x-auto scrollbar-hide">
+      <div class="flex justify-start md:justify-center gap-2 min-w-max pb-2">
         <button v-for="category in categories" :key="category.id" @click="selectCategory(category)"
-          class="px-4 py-2 rounded-full text-sm md:text-base transition-colors duration-200"
+          class="px-3 py-1.5 rounded-full text-xs md:text-sm whitespace-nowrap transition-colors duration-200"
           :class="selectedCategory === category ? 'bg-green-600 text-white font-bold' : 'bg-white text-green-700 border border-green-500 hover:bg-green-50'">
           {{ category.name }}
         </button>
@@ -445,17 +527,17 @@ onMounted(() => {
     </div>
 
     <!-- Phrase Cards -->
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-4 mb-8">
       <div v-for="phrase in filteredPhrases" :key="phrase.id"
         class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-200">
-        <div class="p-5">
-          <h3 class="font-bold text-lg text-gray-800 mb-1">{{ phrase.english }}</h3>
-          <p class="text-green-600 font-medium mb-3">{{ phrase.vietnamese }}</p>
-          <p class="text-gray-500 text-sm mb-4" v-if="phrase.pronunciation">{{ phrase.pronunciation }}</p>
+        <div class="p-4">
+          <h3 class="font-bold text-base md:text-lg text-gray-800 mb-1">{{ phrase.english }}</h3>
+          <p class="text-green-600 font-medium mb-2">{{ phrase.vietnamese }}</p>
+          <p class="text-gray-500 text-xs md:text-sm mb-3" v-if="phrase.pronunciation">{{ phrase.pronunciation }}</p>
           <button @click="playAudio(phrase)"
-            class="w-full bg-green-100 hover:bg-green-200 text-green-800 py-2 px-4 rounded flex items-center justify-center"
+            class="w-full bg-green-100 hover:bg-green-200 text-green-800 py-1.5 px-3 rounded flex items-center justify-center text-sm transition-colors"
             :class="{ 'pulse-animation': playingId === phrase.id }">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1.5" viewBox="0 0 20 20" fill="currentColor">
               <path fill-rule="evenodd"
                 d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z"
                 clip-rule="evenodd" />
@@ -467,50 +549,56 @@ onMounted(() => {
     </div>
 
     <!-- Empty State -->
-    <div v-if="filteredPhrases.length === 0" class="text-center py-12">
-      <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 mx-auto text-gray-400" fill="none" viewBox="0 0 24 24"
-        stroke="currentColor">
+    <div v-if="filteredPhrases.length === 0" class="text-center py-10">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 md:h-16 md:w-16 mx-auto text-gray-400" fill="none"
+        viewBox="0 0 24 24" stroke="currentColor">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
           d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z" />
       </svg>
-      <p class="text-gray-500 mt-4">No phrases available in this category yet.</p>
+      <p class="text-gray-500 mt-3 text-sm md:text-base">
+        {{ searchQuery ? 'No phrases match your search.' : 'No phrases available in this category yet.' }}
+      </p>
+      <button v-if="searchQuery" @click="searchQuery = ''"
+        class="mt-2 text-green-600 hover:text-green-700 text-sm font-medium">
+        Clear search
+      </button>
     </div>
 
     <!-- Audio Element (Hidden) -->
     <audio ref="audioPlayer" @ended="audioEnded"></audio>
 
     <!-- VND to SGD Converter -->
-    <div id="currency-converter" v-show="showConverter" class="mt-20 mb-8">
-      <div class="max-w-lg mx-auto bg-white rounded-lg shadow-lg overflow-hidden">
-        <div class="bg-blue-500 text-white p-4">
-          <h2 class="text-xl font-bold flex items-center">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2" fill="none" viewBox="0 0 24 24"
+    <div id="converter" v-show="showConverter" class="mt-16 mb-8 scroll-mt-4">
+      <div class="max-w-lg mx-auto bg-white rounded-lg shadow-lg overflow-hidden border border-blue-100">
+        <div class="bg-blue-500 text-white p-3 md:p-4">
+          <h2 class="text-lg md:text-xl font-bold flex items-center">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 md:h-6 md:w-6 mr-2" fill="none" viewBox="0 0 24 24"
               stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                 d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
             Currency Converter
           </h2>
-          <p class="text-sm mt-1">Convert between Vietnamese Dong (VND) and Singapore Dollar (SGD)</p>
+          <p class="text-xs md:text-sm mt-1">Convert between Vietnamese Dong (VND) and Singapore Dollar (SGD)</p>
         </div>
 
-        <div class="p-6">
+        <div class="p-4 md:p-6">
           <!-- VND to SGD -->
-          <div class="mb-6">
-            <label class="block text-gray-700 mb-2 font-medium">
+          <div class="mb-5">
+            <label class="block text-gray-700 mb-1.5 font-medium text-sm">
               Vietnamese Dong (VND)
             </label>
             <div
               class="flex border border-gray-300 rounded overflow-hidden focus-within:border-blue-500 focus-within:ring-1 focus-within:ring-blue-500">
-              <div class="bg-gray-100 px-3 py-2 text-gray-500 flex items-center">₫</div>
+              <div class="bg-gray-100 px-3 py-2 text-gray-500 flex items-center text-sm">₫</div>
               <input type="text" v-model="vndAmount" @input="convertVndToSgd" placeholder="Enter amount in VND"
-                class="w-full p-2 outline-none">
+                class="w-full p-2 text-sm outline-none">
             </div>
           </div>
 
           <!-- Exchange icon -->
-          <div class="flex justify-center items-center mb-6">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-400" fill="none" viewBox="0 0 24 24"
+          <div class="flex justify-center items-center mb-5">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24"
               stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                 d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4" />
@@ -519,28 +607,104 @@ onMounted(() => {
 
           <!-- SGD to VND -->
           <div>
-            <label class="block text-gray-700 mb-2 font-medium">
+            <label class="block text-gray-700 mb-1.5 font-medium text-sm">
               Singapore Dollar (SGD)
             </label>
             <div
               class="flex border border-gray-300 rounded overflow-hidden focus-within:border-blue-500 focus-within:ring-1 focus-within:ring-blue-500">
-              <div class="bg-gray-100 px-3 py-2 text-gray-500 flex items-center">S$</div>
+              <div class="bg-gray-100 px-3 py-2 text-gray-500 flex items-center text-sm">S$</div>
               <input type="text" v-model="sgdAmount" @input="convertSgdToVnd" placeholder="Enter amount in SGD"
-                class="w-full p-2 outline-none">
+                class="w-full p-2 text-sm outline-none">
             </div>
           </div>
 
-          <div class="mt-6 text-xs text-gray-500">
+          <div class="mt-5 text-xs text-gray-500">
             <p>Exchange rates as of 9 May 2025:</p>
             <p>1 SGD = {{ sgdToVndRate.toLocaleString() }} VND</p>
             <p>1 VND = {{ vndToSgdRate.toFixed(6) }} SGD</p>
           </div>
         </div>
       </div>
+
+      <div class="text-center mt-4">
+        <button @click="showConverter = false" class="text-blue-500 hover:text-blue-700 text-sm font-medium">
+          Hide Currency Converter
+        </button>
+      </div>
+    </div>
+
+    <!-- Emergency Numbers Section -->
+    <div id="emergency" v-show="showEmergency" class="mt-16 mb-8 scroll-mt-4">
+      <div class="max-w-2xl mx-auto">
+        <div class="bg-red-500 text-white p-3 md:p-4 rounded-t-lg">
+          <h2 class="text-lg md:text-xl font-bold flex items-center">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 md:h-6 md:w-6 mr-2" fill="none" viewBox="0 0 24 24"
+              stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192l-3.536 3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            Emergency Numbers in Vietnam
+          </h2>
+          <p class="text-xs md:text-sm mt-1">Important contact numbers for emergencies in Vietnam</p>
+        </div>
+
+        <div class="bg-white shadow-lg rounded-b-lg divide-y">
+          <div v-for="(item, index) in emergencyNumbers" :key="index"
+            class="p-3 md:p-4 flex flex-col sm:flex-row sm:items-center">
+            <div class="flex-grow mb-2 sm:mb-0">
+              <h3 class="font-medium text-gray-900">{{ item.name }}</h3>
+              <p class="text-xs text-gray-500 mt-0.5">{{ item.description }}</p>
+            </div>
+            <div class="flex items-center">
+              <span class="font-bold text-red-600 mr-3 text-lg">{{ item.number }}</span>
+              <!-- <button @click="callNumber(item.number)"
+                class="bg-red-100 hover:bg-red-200 text-red-800 px-3 py-1 rounded text-sm flex items-center transition-colors">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24"
+                  stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+                </svg>
+                Call
+              </button> -->
+            </div>
+          </div>
+        </div>
+
+        <div class="bg-yellow-50 border-l-4 border-yellow-400 p-3 md:p-4 mt-4 rounded text-sm text-yellow-800">
+          <div class="flex">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 flex-shrink-0 mr-2" fill="none" viewBox="0 0 24 24"
+              stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            <div>
+              <p class="font-medium">Emergency Tip</p>
+              <p class="mt-1">When calling emergency services in Vietnam, try to have a local Vietnamese speaker assist
+                you if possible, as English proficiency may vary among emergency operators.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="text-center mt-4">
+          <button @click="showEmergency = false" class="text-red-500 hover:text-red-700 text-sm font-medium">
+            Hide Emergency Numbers
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Back to Top Button -->
+    <div class="fixed bottom-4 right-4">
+      <button @click="window.scrollTo({ top: 0, behavior: 'smooth' })"
+        class="bg-green-600 hover:bg-green-700 text-white rounded-full p-2 shadow-lg transition-colors">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7" />
+        </svg>
+      </button>
     </div>
 
     <!-- Footer -->
-    <footer class="mt-12 text-center text-gray-500 text-sm">
+    <footer class="mt-16 text-center text-gray-500 text-xs md:text-sm pb-4">
       <p>&copy; 2025 Common Vietnamese Phrases</p>
       <p class="mt-1">Created with Vue.js and Tailwind CSS, by Piao TaiLin, for his Vietnam Trip</p>
     </footer>
@@ -562,5 +726,18 @@ onMounted(() => {
 
 .pulse-animation {
   animation: pulse-once 0.3s ease-in-out;
+}
+
+/* Hide scrollbar for Chrome, Safari and Opera */
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+/* Hide scrollbar for IE, Edge and Firefox */
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  /* IE and Edge */
+  scrollbar-width: none;
+  /* Firefox */
 }
 </style>
