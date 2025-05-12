@@ -318,7 +318,7 @@ const phrases = [
     "category": "shopping",
     "english": "I want to buy this",
     "vietnamese": "Tôi muốn mua cái này",
-    "pronunciation": "",
+    "pronunciation": "toy moon mua guy nay",
     "audio": "/audio/shopping/i_want_to_buy_this.mp3"
   },
   {
@@ -326,15 +326,15 @@ const phrases = [
     "category": "shopping",
     "english": "I'll pay in cash",
     "vietnamese": "Tôi sẽ trả bằng tiền mặt",
-    "pronunciation": "",
+    "pronunciation": "toy seh cha bang tien mat",
     "audio": "/audio/shopping/i_will_pay_in_cash.mp3"
   },
   {
     "id": 37,
     "category": "shopping",
     "english": "Do you accept cards?",
-    "vietnamese": "Có chấp nhận thẻ không? ",
-    "pronunciation": "",
+    "vietnamese": "Có chấp nhận thẻ không?",
+    "pronunciation": "caw chup nyun theh khong",
     "audio": "/audio/shopping/do_you_accept_cards.mp3"
   },
   {
@@ -342,27 +342,44 @@ const phrases = [
     "category": "shopping",
     "english": "May I have the receipt?",
     "vietnamese": "Tôi có thể xin biên lai được không?",
-    "pronunciation": "",
+    "pronunciation": "toy caw thay sin been lie duke khong",
     "audio": "/audio/shopping/can_i_have_a_receipt.mp3"
   },
   {
     "id": 39,
-    "category": "shopping",
-    "english": "",
-    "vietnamese": "",
-    "pronunciation": "",
-    "audio": "/audio/shopping/null.mp3"
+    "category": "emergency",
+    "english": "Help!",
+    "vietnamese": "Cứu tôi với!",
+    "pronunciation": "koo toy voy",
+    "audio": "/audio/emergency/help.mp3"
   },
   {
     "id": 40,
-    "category": "shopping",
-    "english": "",
-    "vietnamese": "",
-    "pronunciation": "",
-    "audio": "/audio/shopping/null.mp3"
+    "category": "emergency",
+    "english": "Police",
+    "vietnamese": "Cảnh sát",
+    "pronunciation": "kahnh saht",
+    "audio": "/audio/emergency/police.mp3"
+  },
+  {
+    "id": 41,
+    "category": "emergency",
+    "english": "Doctor",
+    "vietnamese": "Bác sĩ",
+    "pronunciation": "bahk see",
+    "audio": "/audio/emergency/doctor.mp3"
   }
 
 ]
+
+// Scroll to top function
+const scrollToTop = () => {
+  window.scrollTo({
+    top: 0,
+    behavior: 'smooth'
+  })
+}
+
 
 // Computed property for filtered phrases
 const filteredPhrases = computed(() => {
@@ -695,7 +712,7 @@ onMounted(() => {
 
     <!-- Back to Top Button -->
     <div class="fixed bottom-4 right-4">
-      <button @click="window.scrollTo({ top: 0, behavior: 'smooth' })"
+      <button @click="scrollToTop"
         class="bg-green-600 hover:bg-green-700 text-white rounded-full p-2 shadow-lg transition-colors">
         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7" />
@@ -705,7 +722,6 @@ onMounted(() => {
 
     <!-- Footer -->
     <footer class="mt-16 text-center text-gray-500 text-xs md:text-sm pb-4">
-      <p>&copy; 2025 Common Vietnamese Phrases</p>
       <p class="mt-1">Created with Vue.js and Tailwind CSS, by Piao TaiLin, for his Vietnam Trip</p>
     </footer>
   </main>
