@@ -28,151 +28,327 @@ const categories = [
 
 // Define phrases
 const phrases = [
+  // greetings
   {
-    id: 1,
-    category: 'greetings',
-    english: 'Hello',
-    vietnamese: 'Xin chào',
-    pronunciation: 'sin chow',
-    audio: '/audio/greetings/hello.mp3'
+    "id": 1,
+    "category": "greetings",
+    "english": "Hello",
+    "vietnamese": "Xin chào",
+    "pronunciation": "sin chow",
+    "audio": "/audio/greetings/hello.mp3"
   },
   {
-    id: 2,
-    category: 'greetings',
-    english: 'Hi!',
-    vietnamese: 'Chào!',
+    "id": 2,
+    "category": "greetings",
+    "english": "Hi!",
+    "vietnamese": "Chào!",
+    "pronunciation": "chow",
+    "audio": "/audio/greetings/hi.mp3"
+  },
+  {
+    "id": 3,
+    "category": "greetings",
+    "english": "Thank you",
+    "vietnamese": "Cảm ơn",
+    "pronunciation": "gahm un",
+    "audio": "/audio/greetings/thankyou.mp3"
+  },
+  {
+    "id": 4,
+    "category": "greetings",
+    "english": "Sorry",
+    "vietnamese": "Xin lỗi",
+    "pronunciation": "sin loy",
+    "audio": "/audio/greetings/sorry.mp3"
+  },
+  {
+    "id": 5,
+    "category": "greetings",
+    "english": "Please",
+    "vietnamese": "Làm ơn",
+    "pronunciation": "lahm un",
+    "audio": "/audio/greetings/please.mp3"
+  },
+  {
+    "id": 6,
+    "category": "greetings",
+    "english": "Goodbye",
+    "vietnamese": "Tạm biệt",
+    "pronunciation": "tahm byet",
+    "audio": "/audio/greetings/goodbye.mp3"
+  },
+  {
+    "id": 7,
+    "category": "greetings",
+    "english": "Where is the bathroom?",
+    "vietnamese": "Phòng tắm ở đâu?",
+    "pronunciation": "fong tahm uh dow",
+    "audio": "/audio/greetings/where_bathroom.mp3"
+  },
+  {
+    "id": 8,
+    "category": "greetings",
+    "english": "Yes",
+    "vietnamese": "Có",
+    "pronunciation": "caw",
+    "audio": "/audio/greetings/yes.mp3"
+  },
+  {
+    "id": 9,
+    "category": "greetings",
+    "english": "No",
+    "vietnamese": "Không",
+    "pronunciation": "khum",
+    "audio": "/audio/greetings/no.mp3"
+  },
+  {
+    "id": 10,
+    "category": "greetings",
+    "english": "Very good",
+    "vietnamese": "Rất tốt",
+    "pronunciation": "zut tote",
+    "audio": "/audio/greetings/very_good.mp3"
+  },
+  {
+    "id": 11,
+    "category": "greetings",
+    "english": "Beautiful",
+    "vietnamese": "Xinh đẹp",
+    "pronunciation": "sing dep",
+    "audio": "/audio/greetings/beautiful.mp3"
+  },
+  {
+    "id": 12,
+    "category": "greetings",
+    "english": "I like it",
+    "vietnamese": "Tôi thích nó",
+    "pronunciation": "toy tick naw",
+    "audio": "/audio/greetings/i_like_it.mp3"
+  },
+  {
+    "id": 13,
+    "category": "greetings",
+    "english": "Ok",
+    "vietnamese": "Ổn rồi",
+    "pronunciation": "ohn zoy",
+    "audio": "/audio/greetings/ok.mp3"
+  },
+  {
+    "id": 14,
+    "category": "greetings",
+    "english": "Good morning",
+    "vietnamese": "Chào buổi sáng",
+    "pronunciation": "chow boo-ee sahng",
+    "audio": "/audio/greetings/good_morning.mp3"
+  },
+  {
+    "id": 15,
+    "category": "greetings",
+    "english": "Good night",
+    "vietnamese": "Chúc ngủ ngon",
+    "pronunciation": "chook ngoo ngon",
+    "audio": "/audio/greetings/good_night.mp3"
+  },
+  {
+    "id": 16,
+    "category": "greetings",
+    "english": "Thank you very much!",
+    "vietnamese": "Cảm ơn bạn rất nhiều",
+    "pronunciation": "gahm un ban zut nyew",
+    "audio": "/audio/greetings/thank_you_very_much.mp3"
+  },
+  {
+    "id": 17,
+    "category": "greetings",
+    "english": "Of course",
+    "vietnamese": "Tất nhiên",
+    "pronunciation": "tut nyen",
+    "audio": "/audio/greetings/of_course.mp3"
+  },
+  {
+    "id": 18,
+    "category": "greetings",
+    "english": "Correct",
+    "vietnamese": "Đúng",
+    "pronunciation": "doong",
+    "audio": "/audio/greetings/correct.mp3"
+  },
+  {
+    "id": 19,
+    "category": "greetings",
+    "english": "I agree",
+    "vietnamese": "Tôi đồng ý",
+    "pronunciation": "toy dome ee",
+    "audio": "/audio/greetings/i_agree.mp3"
+  },
+  {
+    "id": 20,
+    "category": "greetings",
+    "english": "I don't understand",
+    "vietnamese": "Tôi không hiểu",
+    "pronunciation": "toy khum hew",
+    "audio": "/audio/greetings/i_dont_understand.mp3"
+  },
+  {
+    "id": 21,
+    "category": "greetings",
+    "english": "I understand",
+    "vietnamese": "Tôi hiểu",
+    "pronunciation": "toy hew",
+    "audio": "/audio/greetings/i_understand.mp3"
+  },
+  {
+    "id": 22,
+    "category": "greetings",
+    "english": "Can you speak English?",
+    "vietnamese": "Bạn có nói tiếng Anh không?",
+    "pronunciation": "ban caw noy tyeng anh khum",
+    "audio": "/audio/greetings/can_you_speak_english.mp3"
+  },
+  {
+    "id": 23,
+    "category": "greetings",
+    "english": "Can you speak Chinese?",
+    "vietnamese": "Bạn có thể nói tiếng Trung không?",
+    "pronunciation": "ban caw teh noy tyeng choong khum",
+    "audio": "/audio/greetings/can_you_speak_chinese.mp3"
+  },
+  {
+    "id": 24,
+    "category": "greetings",
+    "english": "I am from Singapore",
+    "vietnamese": "Tôi đến từ Singapore",
+    "pronunciation": "toy den tuh Singapore",
+    "audio": "/audio/greetings/i_am_from_singapore.mp3"
+  },
+  {
+    "id": 25,
+    "category": "greetings",
+    "english": "I don't know how to speak Vietnamese",
+    "vietnamese": "Tôi không biết nói tiếng Việt",
+    "pronunciation": "toy khum byet noy tyeng vee-et",
+    "audio": "/audio/greetings/i_dont_know_how_to_speak_vietnamese.mp3"
+  },
+  {
+    "id": 26,
+    "category": "food",
+    "english": "Coffee",
+    "vietnamese": "Cà phê",
+    "pronunciation": "gah feh",
+    "audio": "/audio/food/coffee.mp3"
+  },
+  {
+    "id": 27,
+    "category": "food",
+    "english": "Black coffee",
+    "vietnamese": "cà phê đen",
+    "pronunciation": "gah feh den",
+    "audio": "/audio/food/coffee_black.mp3"
+  },
+  {
+    "id": 28,
+    "category": "food",
+    "english": "Coffee with milk",
+    "vietnamese": "cà phê sữa",
+    "pronunciation": "gah feh soo-ah",
+    "audio": "/audio/food/coffee_with_milk.mp3"
+  },
+  {
+    "id": 29,
+    "category": "food",
+    "english": "Iced Coffee",
+    "vietnamese": "cà phê đá",
+    "pronunciation": "gah feh dah",
+    "audio": "/audio/food/coffee_iced.mp3"
+  },
+  {
+    "id": 30,
+    "category": "food",
+    "english": "Is this spicy?",
+    "vietnamese": "cái này có cay không?",
+    "pronunciation": "guy nye caw kai khum",
+    "audio": "/audio/food/is_this_spicy.mp3"
+  },
+  {
+    "id": 31,
+    "category": "food",
+    "english": "I want to order this",
+    "vietnamese": "tôi muốn đặt hàng này",
+    "pronunciation": "toy muon dat hahng nye",
+    "audio": "/audio/food/i_want_to_order_this.mp3"
+  },
+  {
+    "id": 32,
+    "category": "food",
+    "english": "How much is it?",
+    "vietnamese": "Cái đó giá bao nhiêu?",
+    "pronunciation": "guy daw zah bao nyew",
+    "audio": "/audio/food/how_much_is_it.mp3"
+  },
+  {
+    "id": 33,
+    "category": "food",
+    "english": "Delicious",
+    "vietnamese": "Ngon",
+    "pronunciation": "ngawn",
+    "audio": "/audio/food/delicious.mp3"
+  },
+  {
+    "id": 34,
+    "category": "food",
+    "english": "The check, please",
+    "vietnamese": "Cho hóa đơn tính tiền đi",
+    "pronunciation": "chaw hwah dun ting tee-en dee",
+    "audio": "/audio/food/the_check_please.mp3"
+  },
+  {
+    id: 35,
+    category: 'food',
+    english: '',
+    vietnamese: '',
     pronunciation: '',
-    audio: '/audio/greetings/hi.mp3'
+    audio: '/audio/food/null.mp3'
   },
   {
-    id: 3,
-    category: 'greetings',
-    english: 'Thank you',
-    vietnamese: 'Cảm ơn',
+    id: 36,
+    category: 'food',
+    english: '',
+    vietnamese: '',
     pronunciation: '',
-    audio: '/audio/greetings/thankyou.mp3'
+    audio: '/audio/food/null.mp3'
   },
   {
-    id: 4,
-    category: 'greetings',
-    english: 'Sorry',
-    vietnamese: 'Xin lỗi',
+    id: 37,
+    category: 'food',
+    english: '',
+    vietnamese: '',
     pronunciation: '',
-    audio: '/audio/greetings/sorry.mp3'
+    audio: '/audio/food/null.mp3'
   },
   {
-    id: 5,
-    category: 'greetings',
-    english: 'Please',
-    vietnamese: 'Làm ơn',
+    id: 38,
+    category: 'food',
+    english: '',
+    vietnamese: '',
     pronunciation: '',
-    audio: '/audio/greetings/please.mp3'
+    audio: '/audio/food/null.mp3'
   },
   {
-    id: 6,
-    category: 'greetings',
-    english: 'Goodbye',
-    vietnamese: 'Tạm biệt',
+    id: 39,
+    category: 'food',
+    english: '',
+    vietnamese: '',
     pronunciation: '',
-    audio: '/audio/greetings/goodbye.mp3'
+    audio: '/audio/food/null.mp3'
   },
   {
-    id: 7,
-    category: 'greetings',
-    english: 'Where is the bathroom?',
-    vietnamese: 'Phòng tắm ở đâu?',
+    id: 40,
+    category: 'food',
+    english: '',
+    vietnamese: '',
     pronunciation: '',
-    audio: '/audio/greetings/where_bathroom.mp3'
-  },
-  {
-    id: 8,
-    category: 'greetings',
-    english: 'Yes',
-    vietnamese: 'Có',
-    pronunciation: '',
-    audio: '/audio/greetings/yes.mp3'
-  },
-  {
-    id: 9,
-    category: 'greetings',
-    english: 'No',
-    vietnamese: 'Không',
-    pronunciation: '',
-    audio: '/audio/greetings/no.mp3'
-  },
-  {
-    id: 10,
-    category: 'greetings',
-    english: 'Very good',
-    vietnamese: 'Rất tốt',
-    pronunciation: '',
-    audio: '/audio/greetings/very_good.mp3'
-  },
-  {
-    id: 11,
-    category: 'greetings',
-    english: 'Beautiful',
-    vietnamese: 'Xinh đẹp',
-    pronunciation: '',
-    audio: '/audio/greetings/beautiful.mp3'
-  },
-  {
-    id: 12,
-    category: 'greetings',
-    english: 'I like it',
-    vietnamese: 'Tôi thích nó',
-    pronunciation: '',
-    audio: '/audio/greetings/i_like_it.mp3'
-  },
-  {
-    id: 13,
-    category: 'greetings',
-    english: 'Ok',
-    vietnamese: 'Ổn rồi',
-    pronunciation: '',
-    audio: '/audio/greetings/ok.mp3'
-  },
-  {
-    id: 14,
-    category: 'greetings',
-    english: 'Good morning',
-    vietnamese: 'Chào buổi sáng',
-    pronunciation: '',
-    audio: '/audio/greetings/good_morning.mp3'
-  },
-  {
-    id: 15,
-    category: 'greetings',
-    english: 'Good night',
-    vietnamese: 'Chúc ngủ ngon',
-    pronunciation: '',
-    audio: '/audio/greetings/good_night.mp3'
-  },
-  {
-    id: 16,
-    category: 'greetings',
-    english: 'Thank you very much!',
-    vietnamese: 'Cảm ơn bạn rất nhiều',
-    pronunciation: '',
-    audio: '/audio/greetings/thank_you_very_much.mp3'
-  },
-  {
-    id: 17,
-    category: 'greetings',
-    english: 'Of course',
-    vietnamese: 'Tất nhiên',
-    pronunciation: '',
-    audio: '/audio/greetings/of_course.mp3'
-  },
-  {
-    id: 18,
-    category: 'greetings',
-    english: 'Correct',
-    vietnamese: 'Đúng',
-    pronunciation: '',
-    audio: '/audio/greetings/correct.mp3'
-  },
-
+    audio: '/audio/food/null.mp3'
+  }
 ]
 
 // Computed property for filtered phrases
