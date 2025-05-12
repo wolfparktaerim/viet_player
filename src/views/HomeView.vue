@@ -6,6 +6,16 @@ const audioPlayer = ref(null)
 const playingId = ref(null)
 const selectedCategory = ref(null)
 
+// Currency converter
+const showConverter = ref(false)
+const vndAmount = ref('')
+const sgdAmount = ref('')
+
+
+// Fixed exchange rates (as of 9 May 2025)
+const vndToSgdRate = 0.000050 // 1 VND = 0.000058 SGD
+const sgdToVndRate = 20011.72     // 1 SGD = 17,241 VND
+
 // Define categories
 const categories = [
   { id: 'all', name: 'All Phrases' },
@@ -18,159 +28,151 @@ const categories = [
 
 // Define phrases
 const phrases = [
-  // Greetings & Basics
   {
     id: 1,
     category: 'greetings',
     english: 'Hello',
     vietnamese: 'Xin chào',
     pronunciation: 'sin chow',
-    audio: '/audio/xin-chao.mp3'
+    audio: '/audio/greetings/hello.mp3'
   },
   {
     id: 2,
     category: 'greetings',
-    english: 'Thank you',
-    vietnamese: 'Cảm ơn',
-    pronunciation: 'gahm un',
-    audio: '/audio/cam-on.mp3'
+    english: 'Hi!',
+    vietnamese: 'Chào!',
+    pronunciation: '',
+    audio: '/audio/greetings/hi.mp3'
   },
   {
     id: 3,
     category: 'greetings',
-    english: 'Goodbye',
-    vietnamese: 'Tạm biệt',
-    pronunciation: 'tam bee-et',
-    audio: '/audio/tam-biet.mp3'
+    english: 'Thank you',
+    vietnamese: 'Cảm ơn',
+    pronunciation: '',
+    audio: '/audio/greetings/thankyou.mp3'
   },
   {
     id: 4,
     category: 'greetings',
-    english: 'How are you?',
-    vietnamese: 'Bạn khỏe không?',
-    pronunciation: 'ban kwe kohng',
-    audio: '/audio/ban-khoe-khong.mp3'
+    english: 'Sorry',
+    vietnamese: 'Xin lỗi',
+    pronunciation: '',
+    audio: '/audio/greetings/sorry.mp3'
   },
   {
     id: 5,
     category: 'greetings',
-    english: 'My name is...',
-    vietnamese: 'Tôi tên là...',
-    pronunciation: 'toy ten la',
-    audio: '/audio/toi-ten-la.mp3'
+    english: 'Please',
+    vietnamese: 'Làm ơn',
+    pronunciation: '',
+    audio: '/audio/greetings/please.mp3'
   },
-
-  // Ordering Food
   {
     id: 6,
-    category: 'food',
-    english: 'Can I see the menu?',
-    vietnamese: 'Cho tôi xem thực đơn?',
-    pronunciation: 'chaw toy sem tuk dun',
-    audio: '/audio/cho-toi-xem-thuc-don.mp3'
+    category: 'greetings',
+    english: 'Goodbye',
+    vietnamese: 'Tạm biệt',
+    pronunciation: '',
+    audio: '/audio/greetings/goodbye.mp3'
   },
   {
     id: 7,
-    category: 'food',
-    english: 'One bowl of phở, please',
-    vietnamese: 'Cho một tô phở',
-    pronunciation: 'chaw mote taw fuh',
-    audio: '/audio/cho-mot-to-pho.mp3'
+    category: 'greetings',
+    english: 'Where is the bathroom?',
+    vietnamese: 'Phòng tắm ở đâu?',
+    pronunciation: '',
+    audio: '/audio/greetings/where_bathroom.mp3'
   },
   {
     id: 8,
-    category: 'food',
-    english: 'Bill, please',
-    vietnamese: 'Tính tiền',
-    pronunciation: 'tin tee-en',
-    audio: '/audio/tinh-tien.mp3'
+    category: 'greetings',
+    english: 'Yes',
+    vietnamese: 'Có',
+    pronunciation: '',
+    audio: '/audio/greetings/yes.mp3'
   },
   {
     id: 9,
-    category: 'food',
-    english: 'This is delicious',
-    vietnamese: 'Món này rất ngon',
-    pronunciation: 'moan nay zut ngon',
-    audio: '/audio/mon-nay-rat-ngon.mp3'
+    category: 'greetings',
+    english: 'No',
+    vietnamese: 'Không',
+    pronunciation: '',
+    audio: '/audio/greetings/no.mp3'
   },
-
-  // Transportation
   {
     id: 10,
-    category: 'transport',
-    english: 'How much is a taxi to...?',
-    vietnamese: 'Đi taxi đến... bao nhiêu tiền?',
-    pronunciation: 'dee tak-see den... bow nyew tee-en',
-    audio: '/audio/di-taxi-den-bao-nhieu-tien.mp3'
+    category: 'greetings',
+    english: 'Very good',
+    vietnamese: 'Rất tốt',
+    pronunciation: '',
+    audio: '/audio/greetings/very_good.mp3'
   },
   {
     id: 11,
-    category: 'transport',
-    english: 'Where is the bus station?',
-    vietnamese: 'Bến xe buýt ở đâu?',
-    pronunciation: 'ben say bwit uh dow',
-    audio: '/audio/ben-xe-buyt-o-dau.mp3'
+    category: 'greetings',
+    english: 'Beautiful',
+    vietnamese: 'Xinh đẹp',
+    pronunciation: '',
+    audio: '/audio/greetings/beautiful.mp3'
   },
   {
     id: 12,
-    category: 'transport',
-    english: 'Stop here, please',
-    vietnamese: 'Xin dừng lại đây',
-    pronunciation: 'sin zoong lie day',
-    audio: '/audio/xin-dung-lai-day.mp3'
+    category: 'greetings',
+    english: 'I like it',
+    vietnamese: 'Tôi thích nó',
+    pronunciation: '',
+    audio: '/audio/greetings/i_like_it.mp3'
   },
-
-  // Shopping
   {
     id: 13,
-    category: 'shopping',
-    english: 'How much is this?',
-    vietnamese: 'Cái này giá bao nhiêu?',
-    pronunciation: 'guy nay ya bow nyew',
-    audio: '/audio/cai-nay-gia-bao-nhieu.mp3'
+    category: 'greetings',
+    english: 'Ok',
+    vietnamese: 'Ổn rồi',
+    pronunciation: '',
+    audio: '/audio/greetings/ok.mp3'
   },
   {
     id: 14,
-    category: 'shopping',
-    english: 'That\'s too expensive',
-    vietnamese: 'Đắt quá',
-    pronunciation: 'dat wa',
-    audio: '/audio/dat-qua.mp3'
+    category: 'greetings',
+    english: 'Good morning',
+    vietnamese: 'Chào buổi sáng',
+    pronunciation: '',
+    audio: '/audio/greetings/good_morning.mp3'
   },
   {
     id: 15,
-    category: 'shopping',
-    english: 'Can you lower the price?',
-    vietnamese: 'Bớt giá được không?',
-    pronunciation: 'bot ya duoc kohng',
-    audio: '/audio/bot-gia-duoc-khong.mp3'
+    category: 'greetings',
+    english: 'Good night',
+    vietnamese: 'Chúc ngủ ngon',
+    pronunciation: '',
+    audio: '/audio/greetings/good_night.mp3'
   },
-
-  // Emergency
   {
     id: 16,
-    category: 'emergency',
-    english: 'Help!',
-    vietnamese: 'Cứu với!',
-    pronunciation: 'kew voy',
-    audio: '/audio/cuu-voi.mp3'
+    category: 'greetings',
+    english: 'Thank you very much!',
+    vietnamese: 'Cảm ơn bạn rất nhiều',
+    pronunciation: '',
+    audio: '/audio/greetings/thank_you_very_much.mp3'
   },
   {
     id: 17,
-    category: 'emergency',
-    english: 'I need a doctor',
-    vietnamese: 'Tôi cần bác sĩ',
-    pronunciation: 'toy can bac see',
-    audio: '/audio/toi-can-bac-si.mp3'
+    category: 'greetings',
+    english: 'Of course',
+    vietnamese: 'Tất nhiên',
+    pronunciation: '',
+    audio: '/audio/greetings/of_course.mp3'
   },
   {
     id: 18,
-    category: 'emergency',
-    english: 'Call the police',
-    vietnamese: 'Gọi cảnh sát',
-    pronunciation: 'goy kanh sat',
-    audio: '/audio/goi-canh-sat.mp3'
-  }
+    category: 'greetings',
+    english: 'Correct',
+    vietnamese: 'Đúng',
+    pronunciation: '',
+    audio: '/audio/greetings/correct.mp3'
+  },
+
 ]
 
 // Computed property for filtered phrases
@@ -200,6 +202,36 @@ const selectCategory = (category) => {
   selectedCategory.value = category
 }
 
+// Currency converter functions
+const convertVndToSgd = () => {
+  if (vndAmount.value === '') {
+    sgdAmount.value = ''
+    return
+  }
+  const vnd = parseFloat(vndAmount.value.replace(/,/g, ''))
+  if (!isNaN(vnd)) {
+    sgdAmount.value = (vnd * vndToSgdRate).toFixed(2)
+  }
+}
+
+const convertSgdToVnd = () => {
+  if (sgdAmount.value === '') {
+    vndAmount.value = ''
+    return
+  }
+  const sgd = parseFloat(sgdAmount.value.replace(/,/g, ''))
+  if (!isNaN(sgd)) {
+    vndAmount.value = Math.round(sgd * sgdToVndRate).toLocaleString()
+  }
+}
+
+const scrollToConverter = () => {
+  showConverter.value = true
+  setTimeout(() => {
+    document.getElementById('currency-converter').scrollIntoView({ behavior: 'smooth' })
+  }, 100)
+}
+
 onMounted(() => {
   // Set default category on load
   selectedCategory.value = categories[0]
@@ -209,9 +241,20 @@ onMounted(() => {
 <template>
   <main class="container mx-auto px-4 py-8">
     <!-- Header -->
-    <header class="text-center mb-8">
+    <header class="text-center mb-8 relative">
       <h1 class="text-3xl font-bold text-green-700">Common Vietnamese Phrases</h1>
-      <p class="text-gray-600 mt-2">Learn useful Vietnamese phrases for different situations</p>
+      <p class="text-gray-600 mt-2">Learn / play useful Vietnamese phrases for different situations</p>
+
+      <!-- Currency Converter Quick Link -->
+      <button @click="scrollToConverter"
+        class="absolute right-0 top-0 bg-blue-500 hover:bg-blue-600 text-white rounded-full px-3 py-1 text-sm flex items-center">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24"
+          stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+        Currency Converter
+      </button>
     </header>
 
     <!-- Category Selection -->
@@ -260,10 +303,70 @@ onMounted(() => {
     <!-- Audio Element (Hidden) -->
     <audio ref="audioPlayer" @ended="audioEnded"></audio>
 
+    <!-- VND to SGD Converter -->
+    <div id="currency-converter" v-show="showConverter" class="mt-20 mb-8">
+      <div class="max-w-lg mx-auto bg-white rounded-lg shadow-lg overflow-hidden">
+        <div class="bg-blue-500 text-white p-4">
+          <h2 class="text-xl font-bold flex items-center">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2" fill="none" viewBox="0 0 24 24"
+              stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            Currency Converter
+          </h2>
+          <p class="text-sm mt-1">Convert between Vietnamese Dong (VND) and Singapore Dollar (SGD)</p>
+        </div>
+
+        <div class="p-6">
+          <!-- VND to SGD -->
+          <div class="mb-6">
+            <label class="block text-gray-700 mb-2 font-medium">
+              Vietnamese Dong (VND)
+            </label>
+            <div
+              class="flex border border-gray-300 rounded overflow-hidden focus-within:border-blue-500 focus-within:ring-1 focus-within:ring-blue-500">
+              <div class="bg-gray-100 px-3 py-2 text-gray-500 flex items-center">₫</div>
+              <input type="text" v-model="vndAmount" @input="convertVndToSgd" placeholder="Enter amount in VND"
+                class="w-full p-2 outline-none">
+            </div>
+          </div>
+
+          <!-- Exchange icon -->
+          <div class="flex justify-center items-center mb-6">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-400" fill="none" viewBox="0 0 24 24"
+              stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4" />
+            </svg>
+          </div>
+
+          <!-- SGD to VND -->
+          <div>
+            <label class="block text-gray-700 mb-2 font-medium">
+              Singapore Dollar (SGD)
+            </label>
+            <div
+              class="flex border border-gray-300 rounded overflow-hidden focus-within:border-blue-500 focus-within:ring-1 focus-within:ring-blue-500">
+              <div class="bg-gray-100 px-3 py-2 text-gray-500 flex items-center">S$</div>
+              <input type="text" v-model="sgdAmount" @input="convertSgdToVnd" placeholder="Enter amount in SGD"
+                class="w-full p-2 outline-none">
+            </div>
+          </div>
+
+          <div class="mt-6 text-xs text-gray-500">
+            <p>Exchange rates as of 9 May 2025:</p>
+            <p>1 SGD = {{ sgdToVndRate.toLocaleString() }} VND</p>
+            <p>1 VND = {{ vndToSgdRate.toFixed(6) }} SGD</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <!-- Footer -->
     <footer class="mt-12 text-center text-gray-500 text-sm">
       <p>&copy; 2025 Common Vietnamese Phrases</p>
-      <p class="mt-1">Created with Vue.js and Tailwind CSS</p>
+      <p class="mt-1">Created with Vue.js and Tailwind CSS, by Piao TaiLin, for his Vietnam Trip</p>
     </footer>
   </main>
 </template>
