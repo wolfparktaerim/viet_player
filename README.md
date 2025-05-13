@@ -8,7 +8,7 @@ A lightweight, mobile-friendly web application designed to assist travelers in V
 
 ## 🌐 Live Demo
 
-Visit the live application: [VietGo App]([https://vietnam-travel-companion.vercel.app/](https://vietgo.vercel.app/))
+Visit the live application: [VietGo App]([https://vietgo.vercel.app/])
 
 ## ✨ Features
 
