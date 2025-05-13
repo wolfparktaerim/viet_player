@@ -1,6 +1,6 @@
 # VietGo
 
-![app_icon](https://github.com/user-attachments/assets/0ee80f32-1d46-4b8e-a54a-5cd21b80973a)
+![app_icon](https://github.com/user-attachments/assets/eecddfca-555f-413d-9199-4b1a97dbc3ae)
 
 A lightweight, mobile-friendly web application designed to assist travelers in Vietnam with common Vietnamese phrases, SGD-VND conversion, and emergency information.
 
